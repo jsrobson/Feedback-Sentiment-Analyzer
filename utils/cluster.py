@@ -6,6 +6,7 @@ transformation and text clustering.
 # == Third party imports ==
 from bertopic import BERTopic
 from bertopic.representation import KeyBERTInspired
+from bertopic.vectorizers import ClassTfidfTransformer
 from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 from umap import UMAP
@@ -29,15 +30,22 @@ class Cluster:
     feedback into transformed sentence objects for clustering and topic
     extraction.
     """
-    def __init__(self, sentences: list[str]):
+    def __init__(self, sentences: list[str], seeds: list[str] | None = None):
         # natural language feedback, strs
         self.sentences = sentences
+        self.seeds = seeds
         self.st_model = SentenceTransformer(ST_MODEL)
         # cluster model and related topic hierarchy
         self.topic_model = self._build_clusters()
         self.hierarchy = self.topic_model.hierarchical_topics(self.sentences)
 
     def _build_clusters(self) -> BERTopic | None:
+        """
+        Method builds text clusters using BERTopic workflow, returning a
+        BERTopic object that contains relevant data (i.e., tags, documents)
+        for additional parsing.
+        :return: BERTTopic object.
+        """
         if not self.sentences:
             return None
         print("Building clusters...")
@@ -50,19 +58,28 @@ class Cluster:
         # group similar feedback instances based on lower-dimensional embedding
         hdbscan_model = hdbscan.HDBSCAN(min_cluster_size=4, metric="euclidean")
         hdbscan_model.fit_predict(reduced_embeddings)
-        # convert text into numerical features for count vectorizing
+        # convert text into numerical features for count vectorization
         vectorizer_model = CountVectorizer(
             # set low to reduce likelihood that keywords are removed
             max_df=0.4,
             stop_words="english"
         )
+        # add c_tf_idf model to reduce common words across different topics
+        # if user has provided seed words, introduce them here to bias
+        # keyword extraction
+        c_tf_idf_model = ClassTfidfTransformer(bm25_weighting=True,
+                                               seed_words=self.seeds or None)
         # use repr model and semantic similarity to find most repr topic words
         representation_model = KeyBERTInspired()
         # given the generated model, build topic model and return it
+        # if user has provided seed words, introduce them here to bias model
+        # structure
         topic_model = BERTopic(embedding_model=self.st_model,
+                               seed_topic_list=self.seeds or None,
                                umap_model=umap_model,
                                hdbscan_model=hdbscan_model,
                                vectorizer_model=vectorizer_model,
+                               ctfidf_model=c_tf_idf_model,
                                representation_model=representation_model)
         topic_model.fit_transform(self.sentences, embeddings)
         return topic_model
@@ -133,7 +150,4 @@ class Cluster:
                                                         ascending=True)
         parent_name = smallest_rows.iloc[0]['Parent_Name']
         return parent_name
-
-
-
 
