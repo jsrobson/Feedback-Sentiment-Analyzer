@@ -46,7 +46,8 @@ class Subtopic(TopicBase):
         """
         return {
             "Subtopic": self.read_name,
-            "Sentiment": max(self.sentiment, key=self.sentiment.get),
+            "Sentiment": max(self.sentiment, key=self.sentiment.get) if
+            self.sentiment else None,
             "Number of Responses": self.count,
             "Summary": self.summary
         }
