@@ -37,7 +37,8 @@ class Cluster:
         self.st_model = SentenceTransformer(ST_MODEL)
         # cluster model and related topic hierarchy
         self.topic_model = self._build_clusters()
-        self.hierarchy = self.topic_model.hierarchical_topics(self.sentences)
+        if self.sentences:
+            self.hierarchy = self.topic_model.hierarchical_topics(self.sentences)
 
     def _build_clusters(self) -> BERTopic | None:
         """
