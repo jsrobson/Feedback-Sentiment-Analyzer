@@ -69,6 +69,27 @@ The output CSV will contain:
 
 ---
 
+## Example Output
+
+Below is an example of the generated subtopic output using a test file (100 rows) of product sentiment for the Apple Magic Mouse. The produced CSV contains four subtopics in the same format.
+
+**General Topic:** Comfortable Responsive Apple Mouse
+
+**Subtopic:** Comfortable Responsive Cursor Control
+
+**Sentiment:** Very Positive
+
+**Number of Responses:** 51
+
+**Summary:** The feedback centers around the Apple Magic Mouse, a wireless mouse designed for use with Apple devices.
+Users consistently praise its comfortable design, responsive touch surface, and seamless connectivity with both Macs and iPads,
+highlighting features like intuitive gestures and long battery life. While some minor concerns were raised regarding
+the charging port placement and price, the overall sentiment is overwhelmingly positive, with many recommending the mouse
+as a valuable and stylish accessory for enhancing the Apple user experience.
+
+
+---
+
 ## Project Structure
 ```bash
 Feedback-Sentiment-Analyzer/
@@ -104,6 +125,28 @@ pytest tests\
 ```
 Note: UI is not covered by automated tests; these focus on processing logic.
 
+---
+
+## Learning
+Building this project provided hands-on experience across the full lifecycle of a data-driven application, from raw input to user-facing output. Key learnings include:
+
+- **End-to-end Natural Language Processing pipelines**  
+  Designing and integrating a workflow that combines sentiment analysis, topic modeling, and LLM-based summarization, while managing data flow between each stage.
+
+- **Practical use of transformer models**  
+  Working with HuggingFace pipelines and pretrained models for multilingual sentiment analysis, including handling empty inputs and performance considerations.
+
+- **Topic modeling with BERTopic**  
+  Applying clustering techniques (UMAP + HDBSCAN) and class-based TF-IDF to extract interpretable topics and subtopics from unstructured text.
+
+- **Separation of concerns in application design**  
+  Structuring the project to clearly separate UI logic, processing logic, and utility components, making the codebase easier to test, extend, and maintain.
+
+- **Testing ML-adjacent code**  
+  Writing unit tests for non-deterministic and external dependencies by isolating logic and using mocking to avoid expensive model initialization during tests.
+
+- **Building a desktop UI for data workflows**  
+  Creating a Tkinter-based interface that supports file selection, progress feedback, background threading, and safe interaction with long-running tasks.
 ---
 
 ## Licence
