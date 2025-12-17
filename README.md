@@ -105,7 +105,7 @@ Feedback-Sentiment-Analyzer/
 ---
 
 ## Dependencies
-Key libraries include:
+Key libraries are:
 - **Pandas**: Data manipulation
 - **tkinter**: Simple graphical user interface
 - **BERTopic**: Topic modelling
